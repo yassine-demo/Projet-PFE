@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 app = Flask(__name__)
 
-# Establish MySQL database connection for login_register database
+# login_register database
 login_register_connection = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -17,7 +17,7 @@ login_register_connection = mysql.connector.connect(
     database="login_register"
 )
 
-# Establish MySQL database connection for vulnerability_tracker database
+# vulnerability_tracker database
 vulnerability_tracker_connection = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -25,12 +25,12 @@ vulnerability_tracker_connection = mysql.connector.connect(
     database="vulnerability_tracker"
 )
 
-# Define global variables to hold the database connections
+# DB Config
 app.config['LOGIN_REGISTER_CONNECTION'] = login_register_connection
 app.config['VULNERABILITY_TRACKER_CONNECTION'] = vulnerability_tracker_connection
 
 def generate_test_inputs(url, field_name):
-    # Crée une liste de tests d'injection SQL avec différentes techniques
+    # Crée une liste de tests d'injection SQL
     sql_injection_tests = [
         # In-band SQL Injection (Injection SQL en bande)
         ('In-band SQL Injection', [
@@ -97,7 +97,7 @@ def generate_test_inputs(url, field_name):
             f"{field_name}=1' AND ASCII(SUBSTRING(user(),1,1))=97--",  # Vérifie si le premier caractère ASCII de l'utilisateur est 'a'
         ]),
     ]
-    # Retourne la liste des tests d'injection SQL
+    # return
     return sql_injection_tests
 
 
@@ -249,7 +249,7 @@ def extract_website_name(url):
 
 def perform_sql_injection_tests(url, form_fields):
     vulnerabilities = set()
-    test_inputs = generate_test_inputs(url, 'uid')  # Generate test inputs for the 'uid' field
+    test_inputs = generate_test_inputs(url, 'uid')  # Generate test inputs
 
     for field in form_fields:
         for attack_type, test_inputs_list in test_inputs:
@@ -272,7 +272,7 @@ def perform_sql_injection_tests(url, form_fields):
     if vulnerabilities:
         # Extract website name
         website_name = extract_website_name(url)
-        # Insert only the detected vulnerabilities into the database
+        # Insert the detected vulnerabilities
         for vulnerability_type, vulnerability_message in vulnerabilities:
             insert_vulnerability_report(website_name, vulnerability_type, url, request_params, response_content, ip_address, timestamp, vulnerability_type)
 
@@ -280,10 +280,10 @@ def perform_sql_injection_tests(url, form_fields):
 
 def insert_vulnerability_report(website_name, vulnerability_detected, url, request_params, response_content, ip_address, timestamp, attack_type):
     try:
-        # Access the vulnerability_tracker_connection from the app configuration
+        # access the vulnerability_tracker_connection
         connection = app.config['VULNERABILITY_TRACKER_CONNECTION']
         cursor = connection.cursor()
-        # Check if the vulnerability was detected during testing
+        # check if the vulnerability was detected during testing
         if vulnerability_detected:
             cursor.execute("INSERT INTO vulnerability_report (website_name, vulnerability_detected, url, request_params, response_content, ip_address, timestamp, attack_type) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                            (website_name, vulnerability_detected, url, request_params, response_content, ip_address, timestamp, attack_type))
@@ -295,7 +295,7 @@ def insert_vulnerability_report(website_name, vulnerability_detected, url, reque
 
 def get_original_field_value(url, field_name):
     try:
-        # Perform a GET request to the URL and extract the original field value from the response
+        # get request to the URL ++ extract the original field value from the response
         response = requests.get(url)
         html_content = response.text
         soup = BeautifulSoup(html_content, 'html.parser')
@@ -309,7 +309,7 @@ def get_original_field_value(url, field_name):
         print("Error retrieving original field value:", e)
     return None
 
-# Define route to fetch vulnerability trends data and timestamp list
+# Define routes
 @app.route('/vulnerability-trends')
 def vulnerability_trends():
     try:
