@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:200,100,400" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/static/sidebar.css">
+
+    <!-- Include sidebar JavaScript -->
+    <script src="/static/sidebar.js"></script>
+    <script>
+        var TxtRotate = function(el, toRotate, period) {
+            this.toRotate = toRotate;
+            this.el = el;
+            this.loopNum = 0;
+            this.period = parseInt(period, 10) || 2000;
+            this.txt = '';
+            this.tick();
+            this.isDeleting = false;
+        };
+
+        TxtRotate.prototype.tick = function() {
+            var i = this.loopNum % this.toRotate.length;
+            var fullTxt = this.toRotate[i];
+
+            if (this.isDeleting) {
+                this.txt = fullTxt.substring(0, this.txt.length - 1);
+            } else {
+                this.txt = fullTxt.substring(0, this.txt.length + 1);
+            }
+
+            this.el.innerHTML = '<span class="wrap">' + this.txt + '</span>';
+
+            var that = this;
+            var delta = 100 - Math.random() * 50;
+
+            if (this.isDeleting) { delta /= 2; }
+
+            if (!this.isDeleting && this.txt === fullTxt) {
+                delta = this.period;
+                this.isDeleting = true;
+            } else if (this.isDeleting && this.txt === '') {
+                this.isDeleting = false;
+                this.loopNum++;
+                delta = 500;
+            }
+
+            setTimeout(function() {
+                that.tick();
+            }, delta);
+        };
+
+        window.onload = function() {
+            var elements = document.getElementsByClassName('txt-rotate');
+            for (var i = 0; i < elements.length; i++) {
+                var toRotate = elements[i].getAttribute('data-rotate');
+                var period = elements[i].getAttribute('data-period');
+                if (toRotate) {
+                    new TxtRotate(elements[i], JSON.parse(toRotate), period);
+                }
+            }
+            // INJECT CSS
+            var css = document.createElement("style");
+            css.type = "text/css";
+            css.innerHTML = ".txt-rotate > .wrap { border-right: 0.08em solid #666 }";
+            document.body.appendChild(css);
+        };
+
+    </script>
+
+</head>
+
+<body>
+    <!-- Sidebar -->
+<div class="sidebar" id="mySidebar">
+    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+    <a class="active" href="/">
+        <img src="/static/home.png" alt="Home Icon" class="icon">
+        <span class="name">Home</span>
+    </a>
+
+    <a href="/sql-injection-checker">
+        <img src="/static/sqli.png" alt="SQL Injection Icon" class="icon">
+        <span class="name">VSQL</span>
+    </a>
+    <a href="/dashboard">
+        <img src="/static/dash.png" alt="Dashboard Icon" class="icon">
+        <span class="name">Dashboard</span>
+    </a>
+    <a href="/logout">
+        <img src="/static/out.png" alt="logout icon" class="icon">
+        <span class="name">logout</span>
+    </a>
+</div>
+
+    <div class="content" id="main">
+        <div id="Home" class="tabcontent">
+            <h1>Welcome to
+                <span style="color: white;" class="txt-rotate" data-period="2000"
+                    data-rotate='["VulnScan SQLi "]'></span><span>TT !</span>
+            </h1>
+
+            <img src="\static\TT.png" alt="TT Logo" class="logo-animation"
+                style="width: 23%; margin-top: 30px; margin-left: 400px; z-index: 1;">
+
+            <img src="/static/sqliv.gif" alt="SQL Injection Animation"
+                style="width: 150px; position: fixed; bottom: 10px; right: 10px; z-index: 2; opacity: 5;">
+        </div>
+    </div>
+
+</body>
+
+</html>

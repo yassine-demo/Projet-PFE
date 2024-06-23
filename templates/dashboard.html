@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:200,100,400" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/static/sidebar.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar" id="mySidebar">
+    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+    <a class="active" href="/">
+        <img src="/static/home.png" alt="Home Icon" class="icon">
+        <span class="name">Home</span>
+    </a>
+    <a href="/sql-injection-checker">
+        <img src="/static/sqli.png" alt="SQL Injection Icon" class="icon">
+        <span class="name">VSQL</span>
+    </a>
+    <a href="/dashboard">
+        <img src="/static/dash.png" alt="Dashboard Icon" class="icon">
+        <span class="name">Dashboard</span>
+    </a>
+<a href="/logout">
+    <img src="/static/out.png" alt="logout icon" class="icon">
+    <span class="name">logout</span>
+</a>
+</div>
+
+<!-- Page content -->
+<div class="content" id="main">
+    <h1>Dashboard</h1>
+    <img src="/static/scroll.png" id="scroll"
+                    style="width: 150px; position: absolute; top: 30px; right: 20px; z-index: 2; opacity: 5;">
+    <div id="dashboard-data">
+        <!-- Data from the database will be displayed here -->
+        <!-- Vulnerability Trends -->
+        <div class="section">
+            <h2>Most SQL Injection Vulnerability Types Detected</h2>
+            <div id="vulnerability-trends">
+                <canvas id="vulnerability-chart"></canvas>
+            </div>
+        </div>
+     <!-- Timestamp List -->
+     <div class="section" id="tslist">
+        <h2>Last websites checked</h2>
+        <ul id="timestamp-list"></ul>
+    </div>
+    </div>
+</div>
+
+<!-- Include jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Include Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Include the sidebar JavaScript -->
+<script src="/static/sidebar.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+       // Fetch vulnerability trends data and timestamp list
+       $.ajax({
+           url: "/vulnerability-trends",
+           type: "GET",
+           success: function(data) {
+               console.log(data); // Print the response data to the console
+   
+               // Initialize an object to store the count of each attack type
+               var attackTypeCounts = {};
+               // Define all possible attack types with abbreviated names
+               var allAttackTypes = ["In-band", "Time-based", "Boolean-based", "Error-based", "Union-based", "Out-of-band"];
+   
+               // Initialize an object to map full attack type names to abbreviated names
+               var attackTypeAbbreviations = {
+                   "In-band SQL Injection": "In-band",
+                   "Time-based SQL Injection": "Time-based",
+                   "Boolean-based SQL Injection": "Boolean-based",
+                   "Error-based SQL Injection": "Error-based",
+                   "Union-based SQL Injection": "Union-based",
+                   "Out-of-band SQL Injection": "Out-of-band"
+               };
+   
+               // Initialize counts for all attack types to 0
+               allAttackTypes.forEach(function(attackType) {
+                   attackTypeCounts[attackType] = 0;
+               });
+   
+               // Loop through the fetched data and count the occurrences of each attack type
+               data.vulnerabilities.forEach(function(report) {
+                   var attackType = report.attack_type;
+                   var abbreviation = attackTypeAbbreviations[attackType];
+                   attackTypeCounts[abbreviation]++;
+               });
+   
+               // Sort attack types based on their counts (from most to least occurrences)
+               var sortedAttackTypes = allAttackTypes.sort(function(a, b) {
+                   return attackTypeCounts[b] - attackTypeCounts[a];
+               });
+   
+               // Extract attack types and their corresponding counts
+               var attackCounts = sortedAttackTypes.map(function(attackType) {
+                   return attackTypeCounts[attackType];
+               });
+   
+               // Plot the graph using Chart.js
+               var ctx = document.getElementById('vulnerability-chart').getContext('2d');
+               var chart = new Chart(ctx, {
+                   type: 'bar',
+                   data: {
+                       labels: sortedAttackTypes,
+                       datasets: [{
+                           label: 'Number of Occurrences',
+                           data: attackCounts,
+                           backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                           borderColor: 'rgba(255, 99, 132, 1)',
+                           borderWidth: 1
+                       }]
+                   },
+                   options: {
+                       scales: {
+                           y: {
+                               beginAtZero: true,
+                               ticks: {
+                                   color: 'white' // Set the color of the y-axis ticks to white
+                               }
+                           },
+                           x: {
+                               ticks: {
+                                   color: 'white' // Set the color of the x-axis ticks to white
+                               }
+                           }
+                       },
+                       plugins: {
+                           legend: {
+                               labels: {
+                                   color: 'white' // Set the color of the legend labels to white
+                               }
+                           }
+                       }
+                   }
+               });
+
+// Display Timestamp List
+var timestampList = document.createElement("ul");
+timestampList.id = "timestamp-list";
+
+data.vulnerabilities.forEach(function(entry) {
+    var timestamp = new Date(entry.timestamp);
+    var websiteName = entry.website_name;
+    var listItem = document.createElement("li");
+    // Wrap the website name in a <strong> tag for bold styling
+    listItem.innerHTML = "The website <strong>" + websiteName + "</strong> was checked at <strong>" + timestamp.toLocaleString(); + "</strong>"
+    timestampList.appendChild(listItem);
+});
+
+document.getElementById("timestamp-list").appendChild(timestampList);
+
+           },
+           error: function(xhr, status, error) {
+               console.error("Error fetching data:", error);
+           }
+       });
+    });
+</script>
+
+
+</body>
+</html>

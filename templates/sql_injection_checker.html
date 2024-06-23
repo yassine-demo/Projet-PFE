@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check SQL Injection</title>
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:200,100,400" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/static/sidebar.css">
+</head>
+<body>
+
+
+    <!-- Sidebar -->
+<div class="sidebar" id="mySidebar">
+    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+    <a class="active" href="/">
+        <img src="/static/home.png" alt="Home Icon" class="icon">
+        <span class="name">Home</span>
+    </a>
+    <a href="/sql-injection-checker">
+        <img src="/static/sqli.png" alt="SQL Injection Icon" class="icon">
+        <span class="name">VSQL</span>
+    </a>
+    <a href="/dashboard">
+        <img src="/static/dash.png" alt="Dashboard Icon" class="icon">
+        <span class="name">Dashboard</span>
+    </a>
+<a href="/logout">
+    <img src="/static/out.png" alt="logout icon" class="icon">
+    <span class="name">logout</span>
+</a>
+</div>
+
+
+    <div class="content">
+                    <!-- SQL Injection GIF -->
+                    <img src="/static/sqliv.gif" alt="SQL Injection Animation"
+                    style="width: 150px; position: fixed; bottom: 10px; right: 10px; z-index: 2; opacity: 5;">
+        <div class="login-box" >
+            <h2>VulnScan SQLi</h2>
+            <form id="sqlInjectionForm">
+                <div class="user-box">
+                    <input type="text" name="url" id="urlInput" required>
+                    <label for="urlInput">Enter URL</label>
+                </div>
+                <button type="button" id="checkButton" class="check-button">
+                    Check <div id="spinner" class="spinner"></div>
+                </button>
+            </form>
+        </div>
+
+        <div id="result"></div>
+
+        <!-- Include the sidebar JavaScript -->
+<script src="/static/sidebar.js"></script>
+<script>
+document.getElementById('checkButton').addEventListener('click', async () => {
+    const urlInput = document.getElementById('urlInput').value.trim();
+    if (!urlInput) {
+        alert("Please enter a valid URL.");
+        return;
+    }
+
+    // Check if the URL is properly formatted
+    try {
+        new URL(urlInput);
+
+    } catch (error) {
+        alert("Please enter a valid URL format.");
+        return;
+    }
+;
+
+    // Show the spinner and hide the check word
+    const button = document.getElementById('checkButton');
+    button.classList.add('loading');
+    button.disabled = true;
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/check-injection', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "url": urlInput }) // Ensure JSON data is correctly formatted
+        });
+        const data = await response.json();
+
+        // Display the result in the #result div
+        const resultDiv = document.getElementById('result');
+        if (data.vulnerable) {
+            resultDiv.innerText = `Warning : ${data.message}`;
+            resultDiv.classList.add('vulnerable');
+        } else {
+            resultDiv.innerText = "Website seems to be protected against SQL injection attack!";
+            resultDiv.classList.add('protected');
+        }
+    } catch (error) {
+        console.error(error);
+        alert("An error occurred while checking the website.");
+    }
+
+    finally {
+        // Hide the spinner
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'none';
+        button.classList.remove('loading');
+        button.disabled = false;
+    }
+});
+
+        // Function to extract domain name from URL
+        function extractDomainName(url) {
+            const parsedUrl = new URL(url);
+            const domainParts = parsedUrl.hostname.split('.');
+            // Extract the domain name (excluding el subdomains w TLDs)
+            return domainParts.slice(-2)[0];
+        }
+    </script>
+
+</body>
+</html>
