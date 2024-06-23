@@ -1,0 +1,397 @@
+html {
+    height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: linear-gradient(#141e30, #1459a7);
+  background-attachment: fixed; /* Ensure background remains fixed during scrolling */
+}
+
+/* Add animation to the check button */
+.login-box form .check-button {
+    position: relative;
+    margin-top: 10%;
+    display: inline-block;
+    padding: 10px 38px;
+    color: #03e9f4;
+    font-size: 20px;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition: color 0.3s; 
+    letter-spacing: 8px;
+    background-color: transparent;
+    border: 2.5px solid #03e9f4;
+    border-radius: 9px;
+    cursor:pointer;
+}
+
+.spinner {
+    display: none;
+    margin-left: 50px;
+    height: 15px;
+    width: 15px;
+    border: 2px solid #0d656a;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+  
+
+  .button-loader {
+    position: relative;
+    display: inline-block;
+    padding: 30px 20px;
+    color: #03e9f4;
+    font-size: 16px;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition: color 0.3s; /* Add transition for smooth color change */
+    letter-spacing: 4px;
+    background-color: transparent;
+    border: 2px solid #03e9f4;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logo-animation {
+  width: 27%;
+  margin-top: 30px;
+  margin-left: 0; /* Start from the left side */
+  position: relative;
+  animation: slideRight 1.8s forwards; /* Apply the animation */
+}
+
+@keyframes slideRight {
+  0% {
+      margin-left: -300px; /* Start from off-screen left */
+  }
+  100% {
+      margin-left: 400px; /* Move to the right */
+  }
+}
+
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Add animation effect */
+.login-box form .check-button {
+  background: linear-gradient(to top,#03e9f4 2%,#008187 70%, #03e9f4);
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  opacity: 0.7;
+  transition: 0.3s;
+  font-weight: 500;
+  margin-top: 29px;
+  height: 60px;
+}
+
+.login-box form .check-button:hover{
+  opacity: 1;
+}
+
+/* Animation for spans */
+.login-box form .check-button span {
+    position: absolute;
+    display: block;
+    background: #03e9f4; /* Set the color of the animation */
+}
+
+.login-box a span {
+    position: absolute;
+    display: block;
+  }
+  
+  .login-box a span:nth-child(1) {
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #03e9f4);
+    animation: btn-anim1 1s linear infinite;
+  }
+  
+  @keyframes btn-anim1 {
+    0% {
+      left: -100%;
+    }
+    50%,100% {
+      left: 100%;
+    }
+  }
+  
+  .login-box a span:nth-child(2) {
+    top: -100%;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, #03e9f4);
+    animation: btn-anim2 1s linear infinite;
+    animation-delay: .25s
+  }
+  
+  @keyframes btn-anim2 {
+    0% {
+      top: -100%;
+    }
+    50%,100% {
+      top: 100%;
+    }
+  }
+  
+  .login-box a span:nth-child(3) {
+    bottom: 0;
+    right: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(270deg, transparent, #03e9f4);
+    animation: btn-anim3 1s linear infinite;
+    animation-delay: .5s
+  }
+  
+  @keyframes btn-anim3 {
+    0% {
+      right: -100%;
+    }
+    50%,100% {
+      right: 100%;
+    }
+  }
+  
+  .login-box a span:nth-child(4) {
+    bottom: -100%;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(360deg, transparent, #03e9f4);
+    animation: btn-anim4 1s linear infinite;
+    animation-delay: .75s
+  }
+  
+  @keyframes btn-anim4 {
+    0% {
+      bottom: -100%;
+    }
+    50%,100% {
+      bottom: 100%;
+    }
+  }
+  
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    z-index: 999; /* Ensure the pop-up appears above other elements */
+}
+
+#result {
+  position: absolute; 
+  top: 8%;
+  left: -9px;
+  width: calc(100% - 250px); /* Adjust width to accommodate the sidebar */
+  padding: 10px 20px;
+  text-align: left;
+  opacity: 0;
+  transition: 1.2s;
+  transform: translateX(-100%);
+  color: #00f2ff;
+  font-size: 1cm;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  transform: translate(-50%, -50%); /* Center the result container */
+  z-index: 999; /* Ensure the result stays above other content */
+  margin-left: 250px;
+}
+
+
+#result.vulnerable,
+#result.protected {
+    opacity: 5;
+    transform: translateX(0);
+}
+
+.login-box {
+    position: absolute;
+    top: 68%;
+    left: 50%;
+    width: 500px;
+    height: 350px;
+    padding: 40px;
+    transform: translate(-50%, -50%);
+    background:linear-gradient(#1459a7,#141e30);
+    box-sizing: border-box;
+    box-shadow: 0px 5px 20px 10px rgba(0, 221, 255, 0.6);
+    border-radius: 10px;
+
+}
+
+.login-box h2 {
+    margin: 0 0 30px;
+    padding: 0;
+    color: #fff;
+    text-align: center;
+}
+
+.login-box .user-box {
+    position: relative;
+}
+
+.login-box .user-box input {
+    width: 100%;
+    padding: 10px 15px; /* Add padding to create space */
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 40px;
+    border: none;
+    border-bottom: 1px solid #fff;
+    outline: none;
+    background: transparent;
+}
+
+.login-box .user-box label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #fff;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.login-box .user-box input:focus ~ label,
+.login-box .user-box input:valid ~ label {
+    top: -20px;
+    left: 0;
+    color: #03e9f4;
+    font-size: 12px;
+}
+
+.login-box form {
+    text-align: center;
+}
+
+.login-box form a {
+    display: inline-block;
+}
+
+.login-box form a {
+    position: relative;
+    display: inline-block;
+    padding: 10px 20px;
+    color: #03e9f4;
+    font-size: 16px;
+    text-decoration: none;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition: .5s;
+    letter-spacing: 4px;
+}
+
+.login-box a:hover {
+    background: #03e9f4;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #03e9f4,
+                0 0 25px #03e9f4,
+                0 0 50px #03e9f4,
+                0 0 100px #03e9f4;
+}
+
+
+
+.check-button .text {
+    display: inline-block;
+    transition: opacity 0.3s ease;
+  }
+  
+  .check-button.loading .text {
+    opacity: 0;
+  }
+  
+  .check-button.loading .spinner {
+    display: block;
+  }
+
+  .closebtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #314174;
+    color: white; /* Change color to white */
+    border: none;
+    position: absolute; /* Change position to absolute */
+    top: 10px;
+    right: 10px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: 0.3s;
+    z-index: 999; /* Ensure the button appears above other elements */
+}
+
+.closebtn:hover {
+    background-color: #008f97;
+}
+
+
+
+  html,body {
+    font-family: 'Raleway', sans-serif;
+    padding: 1em 2em;
+    font-size: 18px;
+    color: #9bdafe;
+}
+  
+  h1,h2 {
+    font-weight: 200;
+    margin: 0.4em 0;
+  }
+  h1 { font-size: 3.5em; }
+  h2 {
+    color: #ffffff;
+    font-size: 2em;
+  }
+
+  /* Add animation effect */
+.txt-rotate > .wrap {
+  animation: blink-text 1s infinite;
+}
+
+/* Add custom styles for the timestamp list */
+#timestamp-list {
+  font-family: 'Courier New', sans-serif;
+  font-size: large; 
+  margin-top: 20px; 
+  color:#c1e8ff;
+}
+
+#timestamp-list li {
+  margin-bottom: 15px;
+}
+
+#scroll {
+  animation: blink 1.2s infinite;
+}
+@keyframes blink { 
+  0% { opacity:0; }
+  50% { opacity:1; } 
+  100% { opacity:0; }
+}
